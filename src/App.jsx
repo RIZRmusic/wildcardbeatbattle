@@ -7,6 +7,7 @@ export default function App() {
     "Producer E", "Producer F", "Producer G", "Producer H"
   ]);
   const [round1Winners, setRound1Winners] = useState([]);
+  const [wildCardPick, setWildCardPick] = useState(null);
 
   const handleWinnerClick = (producer) => {
     if (!round1Winners.includes(producer) && round1Winners.length < 4) {
@@ -14,9 +15,22 @@ export default function App() {
     }
   };
 
+  const launchWildCard = () => {
+    const eliminated = players.filter(p => !round1Winners.includes(p));
+    if (eliminated.length > 0) {
+      const chosen = eliminated[Math.floor(Math.random() * eliminated.length)];
+      setWildCardPick(chosen);
+    }
+  };
+
+  const totalSemifinalists = wildCardPick
+    ? [...round1Winners, wildCardPick]
+    : round1Winners;
+
   return (
     <div style={{ background: '#0d0d0d', color: '#fff', minHeight: '100vh', padding: '2rem', fontFamily: 'sans-serif' }}>
       <h1 style={{ textAlign: 'center', color: '#00ffc8' }}>♠️ Wild Card Beat Battle</h1>
+
       <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '3rem', flexWrap: 'wrap' }}>
         <div>
           <h3>Round 1</h3>
@@ -47,18 +61,24 @@ export default function App() {
               </div>
             </div>
           ))}
+          {round1Winners.length === 4 && !wildCardPick && (
+            <button onClick={launchWildCard} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem' }}>
+              Draw Wild Card ♠️
+            </button>
+          )}
         </div>
 
         <div>
           <h3>Semifinals</h3>
-          {round1Winners.map((winner, i) => (
+          {totalSemifinalists.map((winner, i) => (
             <div key={i} style={{
-              background: '#222',
+              background: winner === wildCardPick ? '#ff00cc' : '#222',
               padding: '0.5rem 1rem',
               marginBottom: '0.5rem',
               borderRadius: '6px'
             }}>
               {winner}
+              {winner === wildCardPick && <span style={{ marginLeft: 10 }}>♠️ WILD CARD COMEBACK!</span>}
             </div>
           ))}
         </div>
