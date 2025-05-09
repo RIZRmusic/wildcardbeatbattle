@@ -1,137 +1,146 @@
 
 import React, { useState } from "react";
 
-export default function App() {
-  const [competitors, setCompetitors] = useState(Array(8).fill(""));
-  const [bracketStarted, setBracketStarted] = useState(false);
-  const [round1Winners, setRound1Winners] = useState([]);
-  const [wildCardPicks, setWildCardPicks] = useState([]);
+function shuffle(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-  const handleNameChange = (index, value) => {
-    const copy = [...competitors];
-    copy[index] = value;
-    setCompetitors(copy);
+export default function App() {
+  const [input, setInput] = useState(Array(8).fill(""));
+  const [bracketStarted, setBracketStarted] = useState(false);
+  const [players, setPlayers] = useState([]);
+  const [roundWinners, setRoundWinners] = useState([]);
+  const [wildCardEligible, setWildCardEligible] = useState([]);
+  const [wildCardWinners, setWildCardWinners] = useState([]);
+  const [stage, setStage] = useState("input");
+
+  const handleInputChange = (i, value) => {
+    const copy = [...input];
+    copy[i] = value;
+    setInput(copy);
+  };
+
+  const addInput = () => {
+    if (input.length < 24) setInput([...input, ""]);
   };
 
   const startBracket = () => {
-    const filled = competitors.filter(name => name.trim() !== "");
-    if (filled.length % 2 !== 0 || filled.length < 2) {
-      alert("Please enter an even number of competitors (min 2)");
+    const clean = input.map(n => n.trim()).filter(n => n);
+    if (clean.length % 2 !== 0 || clean.length < 2) {
+      alert("Enter an even number of names (min 2)");
       return;
     }
-    setCompetitors(filled);
+    const shuffled = shuffle(clean);
+    setPlayers(shuffled);
     setBracketStarted(true);
+    setStage("round1");
   };
 
   const handleWinnerClick = (name) => {
-    if (!round1Winners.includes(name) && round1Winners.length < competitors.length / 2) {
-      setRound1Winners([...round1Winners, name]);
+    if (roundWinners.includes(name)) return;
+    if (roundWinners.length < players.length / 2) {
+      setRoundWinners([...roundWinners, name]);
     }
   };
 
-  const handleWildCardClick = (name) => {
-    if (!wildCardPicks.includes(name)) {
-      setWildCardPicks([...wildCardPicks, name]);
+  const launchWildCard = () => {
+    const eliminated = players.filter(p => !roundWinners.includes(p));
+    setWildCardEligible(shuffle(eliminated));
+    setStage("wildcard");
+  };
+
+  const handleWildCardWin = (name) => {
+    if (!wildCardWinners.includes(name) && wildCardWinners.length < 2) {
+      setWildCardWinners([...wildCardWinners, name]);
     }
   };
 
-  const eliminated = competitors.filter(p => !round1Winners.includes(p));
-  const semifinalists = [...round1Winners, ...wildCardPicks];
+  const proceedToNextRound = () => {
+    const nextRound = shuffle([...roundWinners, ...wildCardWinners]);
+    alert("Next round would begin now with:
+" + nextRound.join(", "));
+  };
 
   return (
     <div style={{ background: "#0d0d0d", color: "#fff", minHeight: "100vh", padding: "2rem", fontFamily: "sans-serif" }}>
       <h1 style={{ textAlign: "center", color: "#00ffc8" }}>♠️ Wild Card Beat Battle</h1>
 
-      {!bracketStarted ? (
+      {stage === "input" && (
         <div style={{ maxWidth: 600, margin: "0 auto", textAlign: "center" }}>
-          <h3>Enter Competitor Names (2–24, even number)</h3>
-          {competitors.map((name, i) => (
+          <h3>Enter Competitors (2–24 even only)</h3>
+          {input.map((val, i) => (
             <input
               key={i}
-              value={name}
+              value={val}
               placeholder={`Producer ${i + 1}`}
-              onChange={e => handleNameChange(i, e.target.value)}
-              style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem", background: "#222", color: "#fff", border: "1px solid #555" }}
+              onChange={e => handleInputChange(i, e.target.value)}
+              style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem", background: "#222", color: "#fff" }}
             />
           ))}
-          {competitors.length < 24 && (
-            <button onClick={() => setCompetitors([...competitors, ""])} style={{ marginTop: "1rem", padding: "0.5rem 1.5rem" }}>
-              + Add Competitor
-            </button>
+          {input.length < 24 && (
+            <button onClick={addInput} style={{ margin: "1rem" }}>+ Add Competitor</button>
           )}
           <br />
-          <button onClick={startBracket} style={{ marginTop: "1rem", padding: "0.75rem 2rem", background: "#00ffc8", color: "#000", border: "none", cursor: "pointer" }}>
+          <button onClick={startBracket} style={{ padding: "0.75rem 2rem", background: "#00ffc8", color: "#000" }}>
             Start Bracket
           </button>
         </div>
-      ) : (
-        <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", marginTop: "2rem" }}>
-          <div>
-            <h3>Round 1</h3>
-            {Array(competitors.length / 2).fill().map((_, i) => (
-              <div key={i} style={{ marginBottom: "1rem" }}>
-                <div
-                  onClick={() => handleWinnerClick(competitors[i * 2])}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: round1Winners.includes(competitors[i * 2]) ? "#00ffc8" : "#1e1e1e",
-                    marginBottom: "0.5rem",
-                    cursor: "pointer",
-                    borderRadius: "6px"
-                  }}
-                >
-                  {competitors[i * 2]}
-                </div>
-                <div
-                  onClick={() => handleWinnerClick(competitors[i * 2 + 1])}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    background: round1Winners.includes(competitors[i * 2 + 1]) ? "#00ffc8" : "#1e1e1e",
-                    cursor: "pointer",
-                    borderRadius: "6px"
-                  }}
-                >
-                  {competitors[i * 2 + 1]}
-                </div>
+      )}
+
+      {stage === "round1" && (
+        <div>
+          <h3 style={{ textAlign: "center" }}>Round 1 (Click winners)</h3>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+            {Array(players.length / 2).fill().map((_, i) => (
+              <div key={i} style={{ margin: "1rem", background: "#1e1e1e", padding: "1rem", borderRadius: "6px" }}>
+                <div onClick={() => handleWinnerClick(players[i * 2])} style={{
+                  padding: "0.5rem 1rem",
+                  marginBottom: "0.5rem",
+                  background: roundWinners.includes(players[i * 2]) ? "#00ffc8" : "#333",
+                  cursor: "pointer"
+                }}>{players[i * 2]}</div>
+                <div onClick={() => handleWinnerClick(players[i * 2 + 1])} style={{
+                  padding: "0.5rem 1rem",
+                  background: roundWinners.includes(players[i * 2 + 1]) ? "#00ffc8" : "#333",
+                  cursor: "pointer"
+                }}>{players[i * 2 + 1]}</div>
               </div>
             ))}
           </div>
-
-          {round1Winners.length === competitors.length / 2 && (
-            <div style={{ marginTop: "2rem" }}>
-              <h3>Wild Card Round</h3>
-              {eliminated.map((name, i) => (
-                <div
-                  key={i}
-                  onClick={() => handleWildCardClick(name)}
-                  style={{
-                    cursor: "pointer",
-                    background: wildCardPicks.includes(name) ? "#ff00cc" : "#1a1a1a",
-                    padding: "0.5rem 1rem",
-                    margin: "0.25rem",
-                    borderRadius: "6px"
-                  }}
-                >
-                  {name}
-                </div>
-              ))}
+          {roundWinners.length === players.length / 2 && (
+            <div style={{ textAlign: "center", marginTop: "2rem" }}>
+              <button onClick={launchWildCard} style={{ padding: "0.5rem 2rem" }}>Start Wild Card ♠️</button>
             </div>
           )}
+        </div>
+      )}
 
-          <div>
-            <h3>Semifinals</h3>
-            {semifinalists.map((name, i) => (
-              <div key={i} style={{
-                background: wildCardPicks.includes(name) ? "#ff00cc" : "#222",
+      {stage === "wildcard" && (
+        <div style={{ textAlign: "center" }}>
+          <h3>Wild Card Battle — Pick 2 Comebacks</h3>
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
+            {wildCardEligible.map((p, i) => (
+              <div key={i} onClick={() => handleWildCardWin(p)} style={{
+                margin: "0.5rem",
                 padding: "0.5rem 1rem",
-                marginBottom: "0.5rem",
+                background: wildCardWinners.includes(p) ? "#ff00cc" : "#222",
+                cursor: "pointer",
                 borderRadius: "6px"
               }}>
-                {name}
-                {wildCardPicks.includes(name) && <span style={{ marginLeft: 10 }}>♠️ WILD CARD COMEBACK!</span>}
+                {p} {wildCardWinners.includes(p) && "♠️ WILD CARD COMEBACK!"}
               </div>
             ))}
           </div>
+          {wildCardWinners.length === 2 && (
+            <button onClick={proceedToNextRound} style={{ marginTop: "2rem", padding: "0.5rem 2rem" }}>
+              ➡️ Proceed to Next Round
+            </button>
+          )}
         </div>
       )}
     </div>
