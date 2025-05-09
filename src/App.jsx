@@ -11,31 +11,38 @@ function shuffle(array) {
 }
 
 export default function App() {
-  const [input, setInput] = useState(Array(8).fill(""));
+  const [inputCount, setInputCount] = useState("");
+  const [inputFields, setInputFields] = useState([]);
   const [players, setPlayers] = useState([]);
   const [round1Pairs, setRound1Pairs] = useState([]);
   const [round1Winners, setRound1Winners] = useState([]);
   const [wildCardEligible, setWildCardEligible] = useState([]);
   const [wildCardWinners, setWildCardWinners] = useState([]);
-  const [stage, setStage] = useState("input");
+  const [stage, setStage] = useState("setup");
 
-  const handleInputChange = (i, value) => {
-    const copy = [...input];
-    copy[i] = value;
-    setInput(copy);
+  const handleGenerate = () => {
+    const count = parseInt(inputCount);
+    if (isNaN(count) || count < 2 || count > 24 || count % 2 !== 0) {
+      alert("Enter an even number between 2 and 24");
+      return;
+    }
+    setInputFields(Array(count).fill(""));
+    setStage("input");
   };
 
-  const addInput = () => {
-    if (input.length < 24) setInput([...input, ""]);
+  const handleInputChange = (i, value) => {
+    const copy = [...inputFields];
+    copy[i] = value;
+    setInputFields(copy);
   };
 
   const startBracket = () => {
-    const cleaned = input.map(n => n.trim()).filter(n => n);
-    if (cleaned.length < 2 || cleaned.length % 2 !== 0) {
-      alert("Enter an even number of competitors (min 2)");
+    const names = inputFields.map(n => n.trim()).filter(n => n);
+    if (names.length !== inputFields.length) {
+      alert("Please fill in all competitor names.");
       return;
     }
-    const shuffled = shuffle(cleaned);
+    const shuffled = shuffle(names);
     const pairs = [];
     for (let i = 0; i < shuffled.length; i += 2) {
       pairs.push([shuffled[i], shuffled[i + 1]]);
@@ -65,18 +72,36 @@ export default function App() {
 
   const proceedToNextRound = () => {
     const nextRoundPlayers = shuffle([...round1Winners, ...wildCardWinners]);
-    alert("Next round will include:
-" + nextRoundPlayers.join(", "));
+    alert("Next round will include:\n" + nextRoundPlayers.join(", "));
   };
 
   return (
     <div style={{ background: "#0d0d0d", color: "#fff", padding: "2rem", fontFamily: "sans-serif", minHeight: "100vh" }}>
       <h1 style={{ textAlign: "center", color: "#00ffc8" }}>♠️ Wild Card Beat Battle</h1>
 
+      {stage === "setup" && (
+        <div style={{ textAlign: "center" }}>
+          <h3>How many producers are entering? (2–24 even)</h3>
+          <input
+            type="number"
+            min="2"
+            max="24"
+            step="2"
+            value={inputCount}
+            onChange={e => setInputCount(e.target.value)}
+            style={{ padding: "0.5rem", width: "100px", background: "#222", color: "#fff" }}
+          />
+          <br />
+          <button onClick={handleGenerate} style={{ marginTop: "1rem", padding: "0.5rem 2rem" }}>
+            Generate Inputs
+          </button>
+        </div>
+      )}
+
       {stage === "input" && (
         <div style={{ maxWidth: 600, margin: "0 auto" }}>
-          <h3>Enter 2–24 Producers (even number only)</h3>
-          {input.map((val, i) => (
+          <h3>Enter Competitor Names</h3>
+          {inputFields.map((val, i) => (
             <input
               key={i}
               value={val}
@@ -85,16 +110,9 @@ export default function App() {
               style={{ width: "100%", marginBottom: "0.5rem", padding: "0.5rem", background: "#222", color: "#fff" }}
             />
           ))}
-          <div style={{ marginTop: "1rem" }}>
-            {input.length < 24 && (
-              <button onClick={addInput} style={{ marginRight: "1rem", padding: "0.5rem 1rem" }}>
-                + Add Competitor
-              </button>
-            )}
-            <button onClick={startBracket} style={{ padding: "0.5rem 1.5rem", background: "#00ffc8", color: "#000" }}>
-              Start Bracket
-            </button>
-          </div>
+          <button onClick={startBracket} style={{ marginTop: "1rem", padding: "0.5rem 2rem", background: "#00ffc8", color: "#000" }}>
+            Start Bracket
+          </button>
         </div>
       )}
 
