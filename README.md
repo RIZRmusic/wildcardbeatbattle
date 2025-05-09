@@ -1,0 +1,1 @@
+This ZIP contains the complete Wild Card Beat Battle bracket app with full tournament logic, wildcard rounds, dark theme UI, logo integration, and click-to-win functionality.
