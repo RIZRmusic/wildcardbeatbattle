@@ -1,1 +1,1 @@
-This is the final Wild Card Beat Battle bracket app with interactive features.
+Full final app for Wild Card Bracket

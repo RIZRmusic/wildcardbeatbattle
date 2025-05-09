@@ -1,1 +1,1 @@
-// Final bracket code would be here
+// Final App component
