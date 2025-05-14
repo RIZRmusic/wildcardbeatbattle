@@ -1,0 +1,544 @@
+/* Root Variables */
+:root {
+  --color-bg: linear-gradient(135deg, #1a0f2e 0%, #1e1e3f 50%, #1a0f2e 100%);
+  --color-bg-secondary: rgba(255, 255, 255, 0.05);
+  --color-winner: #00ffc8;
+  --color-wildcard: #ff00cc;
+  --color-text: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-bracket-line: rgba(255, 255, 255, 0.15);
+  --glow-winner: 0 0 20px rgba(0, 255, 200, 0.3);
+  --glow-wildcard: 0 0 20px rgba(255, 0, 204, 0.3);
+  --bracket-line: rgba(255, 255, 255, 0.15);
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+}
+
+/* Base Styles */
+body {
+  background: linear-gradient(135deg, #0f0718 0%, hsl(342, 94%, 19%) 50%, #0f0718 100%);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+}
+
+/* Header and Logo Styles */
+.tournament-header {
+  width: 100%;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8vh;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--bracket-line);
+}
+
+.logo {
+  max-width: 300px;
+  height: auto;
+  max-height: 8vh;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+/* Main Content Layout */
+.main-content {
+  display: flex;
+  height: 90vh;
+  position: relative;
+}
+
+/* Left Panel / Admin Panel Styles */
+.left-panel {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 180px;
+  height: 100%;
+  transform: translateX(-180px);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+}
+
+.left-panel:hover {
+  transform: translateX(0);
+}
+
+.left-panel-tab {
+  position: absolute;
+  right: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.8rem 0.3rem;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--color-text-secondary);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--bracket-line);
+}
+
+.left-panel-tab:hover {
+  color: var(--color-winner);
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+}
+
+/* Tournament Bracket Styles */
+.tournament-bracket {
+  flex: 1;
+  margin-left: 30px;
+  padding: 0.3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid var(--bracket-line);
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.bracket-rounds {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+  min-height: min-content;
+}
+
+.round {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid var(--bracket-line);
+  transition: all 0.5s ease;
+  opacity: 0.7;
+}
+
+.round.active {
+  opacity: 1;
+  border-color: var(--color-winner);
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.1);
+}
+
+.round.wild-card.active {
+  border-color: var(--color-wildcard);
+  box-shadow: 0 0 20px rgba(255, 0, 204, 0.1);
+}
+
+.round h3 {
+  color: var(--color-winner);
+  text-align: center;
+  margin: 0 0 1.5rem 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+}
+
+.round.wild-card h3 {
+  color: var(--color-wildcard);
+  text-shadow: 0 0 10px rgba(255, 0, 204, 0.3);
+}
+
+/* Match Styles */
+.matches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.match-container {
+  width: 300px;
+  margin: 0.5rem;
+  animation: matchAppear 0.5s ease forwards;
+}
+
+.match {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--bracket-line);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+/* Producer Card Styles */
+.producer-card {
+  position: relative;
+  padding: 1rem;
+  margin: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border: 1px solid var(--bracket-line);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.producer-card:hover:not(.disabled):not(.loser) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(5px);
+}
+
+.producer-card.winner {
+  background: rgba(0, 255, 200, 0.1);
+  border-color: var(--color-winner);
+  box-shadow: var(--glow-winner);
+  animation: winnerPulse 2s infinite;
+}
+
+.producer-card.loser {
+  background: rgba(0, 0, 0, 0.5);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.producer-card.final-card {
+  cursor: pointer;
+}
+
+.producer-card.final-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* Final Round Placement Styles */
+.final-card.selected-first {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.final-card.selected-second {
+  border-color: var(--silver);
+  box-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
+}
+
+.final-card.selected-third {
+  border-color: var(--bronze);
+  box-shadow: 0 0 20px rgba(205, 127, 50, 0.3);
+}
+
+/* Winner Display */
+.winner-display {
+  text-align: center;
+  animation: winnerDisplayAppear 1s ease forwards;
+  padding: 2rem;
+}
+
+.winner-title {
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  animation: titleGlow 2s infinite;
+}
+
+.winner-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.winner-card.champion {
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  transform: scale(1.1);
+  animation: championGlow 2s infinite;
+}
+
+.winner-card.second-place {
+  border: 2px solid var(--silver);
+  animation: runnerUpGlow 2s infinite;
+}
+
+.winner-card.third-place {
+  border: 2px solid var(--bronze);
+  animation: runnerUpGlow 2s infinite;
+}
+
+/* VS Text */
+.vs {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: vsFlash 2s infinite;
+}
+
+/* Animations */
+@keyframes matchAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes winnerPulse {
+  0% { box-shadow: 0 0 15px var(--color-winner); }
+  50% { box-shadow: 0 0 30px var(--color-winner); }
+  100% { box-shadow: 0 0 15px var(--color-winner); }
+}
+
+@keyframes championGlow {
+  0% { box-shadow: 0 0 20px var(--gold); }
+  50% { box-shadow: 0 0 40px var(--gold); }
+  100% { box-shadow: 0 0 20px var(--gold); }
+}
+
+@keyframes runnerUpGlow {
+  0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); }
+  100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+}
+
+@keyframes titleGlow {
+  0% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+  50% { text-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+  100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes winnerDisplayAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes vsFlash {
+  0% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes wildCardGlow {
+  0% { box-shadow: 0 0 10px var(--color-wildcard); }
+  50% { box-shadow: 0 0 20px var(--color-wildcard); }
+  100% { box-shadow: 0 0 10px var(--color-wildcard); }
+}
+
+/* Scroll Behavior */
+.tournament-bracket::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tournament-bracket::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.tournament-bracket::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.tournament-bracket::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Start Tournament Button */
+.start-tournament-btn {
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, var(--color-winner) 0%, #00b3a4 100%);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-bg);
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+}
+
+.start-tournament-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(0, 255, 200, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .match-container {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .winner-display {
+    padding: 1rem;
+  }
+
+  .winner-title {
+    font-size: 1.5rem;
+  }
+
+  .winner-card {
+    padding: 1rem;
+  }
+
+  .name {
+    font-size: 1.2rem;
+  }
+}
+/* styles.css */
+
+/* Left Panel / Admin Panel Styles */
+.left-panel {
+  /* Existing styles... */
+  background-color: #222; /* Darker background */
+  border-right: 1px solid #444; /* Subtle border */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  padding: 1rem; /* Add some padding */
+  overflow-y: auto; /* Make scrollable if content overflows */
+}
+
+
+.left-panel-tab {
+  /* ... existing styles ... */
+  background-color: #333; /* Darker tab background */
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Shadow on the left */
+}
+
+.left-panel-tab:hover {
+  background-color: var(--color-winner); /* Use your winner color on hover */
+}
+
+.admin-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.reset-button {
+  background-color: #dc3545; /* Red reset button */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* ... (Existing styles for .reset-button:hover and :disabled) */
+
+.producer-input h2,
+.producers-header h2 {
+  color: #eee; /* Slightly lighter heading color */
+}
+
+.input-group input[type="text"] {
+  background-color: #333; /* Darker input background */
+  color: white;
+  border: 1px solid #555;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.input-group button {
+  background-color: var(--color-winner); /* Use your winner color */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.input-group button:hover {
+  background-color: #00b3a4; /* Slightly darker winner color on hover */
+}
+
+.producers-list {
+  border: 1px solid #444; /* Subtle border */
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.producer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #444; /* Subtle separator */
+}
+
+/* ... (Existing styles for .producer-item:last-child, .producer-item span, .remove-button, and .remove-button:hover) */
+
+/* ... (Rest of your styles.css) */
+/* styles.css */
+
+/* Left Panel / Admin Panel Styles */
+.left-panel {
+  /* ... existing styles */
+  background-color: rgba(0, 0, 0, 0.8); /* Darker, semi-transparent background */
+  border-right: 1px solid #333; /* Subtle border */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
+  backdrop-filter: blur(10px);  /* Add a blur effect (modern look) */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  transform: translateX(-100%); /* Initially completely hidden */
+}
+
+.left-panel:hover,
+.left-panel.expanded {
+  transform: translateX(0);
+}
+
+.left-panel-tab {
+  position: absolute;
+  right: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.7); /* Darker tab background */
+  padding: 0.8rem 0.5rem;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  color: white;
+  transition: background-color 0.3s ease;
+  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.3); /* More defined shadow */
+  z-index: 1001; /* Ensure tab is above the panel */
+}
+
+.left-panel-tab:hover {
+  background-color: var(--color-winner);
+}
+
+
+/* ... (The rest of the admin panel styles, including .admin-controls, .reset-button, .producer-input, .producers-list, etc., remain the same from the previous response) */
+
+/* ... (The rest of your styles.css) */
+
