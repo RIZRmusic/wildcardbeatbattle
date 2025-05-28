@@ -84,7 +84,7 @@ body {
   right: -30px;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.685);
   padding: 0.8rem 0.3rem;
   cursor: pointer;
   border-radius: 0 6px 6px 0;
@@ -416,27 +416,6 @@ body {
 }
 /* styles.css */
 
-/* Left Panel / Admin Panel Styles */
-.left-panel {
-  /* Existing styles... */
-  background-color: #222; /* Darker background */
-  border-right: 1px solid #444; /* Subtle border */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-  padding: 1rem; /* Add some padding */
-  overflow-y: auto; /* Make scrollable if content overflows */
-}
-
-
-.left-panel-tab {
-  /* ... existing styles ... */
-  background-color: #333; /* Darker tab background */
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Shadow on the left */
-}
-
-.left-panel-tab:hover {
-  background-color: var(--color-winner); /* Use your winner color on hover */
-}
-
 .admin-controls {
   display: flex;
   flex-direction: column;
@@ -501,42 +480,6 @@ body {
 
 /* ... (Rest of your styles.css) */
 /* styles.css */
-
-/* Left Panel / Admin Panel Styles */
-.left-panel {
-  /* ... existing styles */
-  background-color: rgba(0, 0, 0, 0.8); /* Darker, semi-transparent background */
-  border-right: 1px solid #333; /* Subtle border */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3); /* More pronounced shadow */
-  backdrop-filter: blur(10px);  /* Add a blur effect (modern look) */
-  -webkit-backdrop-filter: blur(10px); /* For Safari */
-  transform: translateX(-100%); /* Initially completely hidden */
-}
-
-.left-panel:hover,
-.left-panel.expanded {
-  transform: translateX(0);
-}
-
-.left-panel-tab {
-  position: absolute;
-  right: -30px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.7); /* Darker tab background */
-  padding: 0.8rem 0.5rem;
-  cursor: pointer;
-  border-radius: 0 6px 6px 0;
-  color: white;
-  transition: background-color 0.3s ease;
-  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.3); /* More defined shadow */
-  z-index: 1001; /* Ensure tab is above the panel */
-}
-
-.left-panel-tab:hover {
-  background-color: var(--color-winner);
-}
-
 
 /* ... (The rest of the admin panel styles, including .admin-controls, .reset-button, .producer-input, .producers-list, etc., remain the same from the previous response) */
 
