@@ -59,6 +59,7 @@ function App() {
   };
 
   return (
+  <>
     <div className="app-container">
       <header className="tournament-header">
         <img
@@ -70,10 +71,6 @@ function App() {
 
       <div className="main-content">
         <div className={`left-panel ${isPanelExpanded ? 'expanded' : ''}`}>
-          <div className="left-panel-tab" onClick={togglePanel}>
-            ⋮
-          </div>
-
           <div className="producer-input">
             <h2>Add Producers ({producers.length}/24)</h2>
             <form onSubmit={handleSubmit} className="input-group">
@@ -133,7 +130,30 @@ function App() {
         )}
       </div>
     </div>
-  );
+
+    {/* Toggle tab outside scrollable panel */}
+    <div
+      className="left-panel-tab"
+      onClick={togglePanel}
+      style={{
+        position: 'fixed',
+        left: isPanelExpanded ? '300px' : '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 1000,
+        backgroundColor: '#111',
+        color: '#fff',
+        padding: '0.5rem 1rem',
+        borderRadius: '0 5px 5px 0',
+        cursor: 'pointer',
+      }}
+    >
+      ⋮
+    </div>
+  </>
+);
+
 }
 
 export default App;
+
