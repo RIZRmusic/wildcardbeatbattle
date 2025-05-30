@@ -1,57 +1,71 @@
-import { useState } from 'react'
-import './styles/styles.css'
-import TournamentBracket from './components/TournamentBracket'
+import { useState } from 'react';
+import './styles/styles.css';
+import TournamentBracket from './components/TournamentBracket';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from './firebase'; // adjust path if needed
 
 function App() {
-  const [producers, setProducers] = useState([])
-  const [producerName, setProducerName] = useState('')
-  const [error, setError] = useState('')
-  const [tournamentStarted, setTournamentStarted] = useState(false)
-  const [isPanelExpanded, setIsPanelExpanded] = useState(false)
+  const [producers, setProducers] = useState([]);
+  const [producerName, setProducerName] = useState('');
+  const [error, setError] = useState('');
+  const [tournamentStarted, setTournamentStarted] = useState(false);
+  const [isPanelExpanded, setIsPanelExpanded] = useState(false);
 
   const handleAddProducer = () => {
     if (!producerName.trim()) {
-      setError('Please enter a producer name')
-      return
+      setError('Please enter a producer name');
+      return;
     }
 
     if (producers.length >= 24) {
-      setError('Maximum 24 producers allowed')
-      return
+      setError('Maximum 24 producers allowed');
+      return;
     }
 
     const newProducer = {
       id: Date.now().toString(),
       name: producerName.trim(),
       isWildCard: false,
-      isEliminated: false
-    }
+      isEliminated: false,
+    };
 
-    setProducers([...producers, newProducer])
-    setProducerName('')
-    setError('')
-  }
+    setProducers([...producers, newProducer]);
+    setProducerName('');
+    setError('');
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    handleAddProducer()
-  }
+    e.preventDefault();
+    handleAddProducer();
+  };
 
-  const resetTournament = () => {
-    if (window.confirm('Are you sure you want to reset the tournament?')) {
-      setProducers([])
-      setTournamentStarted(false)
+  const resetTournament = async () => {
+    const confirm = window.confirm('Are you sure you want to reset the tournament? This will delete all match data.');
+    if (!confirm) return;
+
+    try {
+      await deleteDoc(doc(db, 'tournaments', 'main')); // delete Firestore doc
+      setProducers([]); // reset local state
+      setTournamentStarted(false);
+      alert('Tournament has been reset.');
+    } catch (err) {
+      console.error('Error resetting tournament:', err);
+      alert('Failed to reset tournament. Check console for details.');
     }
-  }
+  };
 
   const togglePanel = () => {
-    setIsPanelExpanded(!isPanelExpanded)
-  }
+    setIsPanelExpanded(!isPanelExpanded);
+  };
 
   return (
     <div className="app-container">
       <header className="tournament-header">
-        <img src="/WILD-CARD-BEAT-BATTLE-LOGO-(TRANSPARENT).png" alt="Tournament Logo" className="logo" />
+        <img
+          src="/WILD-CARD-BEAT-BATTLE-LOGO-(TRANSPARENT).png"
+          alt="Tournament Logo"
+          className="logo"
+        />
       </header>
 
       <div className="main-content">
@@ -59,6 +73,7 @@ function App() {
           <div className="left-panel-tab" onClick={togglePanel}>
             ⋮
           </div>
+
           <div className="producer-input">
             <h2>Add Producers ({producers.length}/24)</h2>
             <form onSubmit={handleSubmit} className="input-group">
@@ -79,27 +94,26 @@ function App() {
             <div className="producers-header">
               <h2>Tournament Lineup</h2>
               {producers.length > 0 && (
-                <button 
-                  className="reset-button"
-                  onClick={resetTournament}
-                >
+                <button className="reset-button" onClick={resetTournament}>
                   Reset
                 </button>
               )}
             </div>
-            {producers.map(producer => (
+
+            {producers.map((producer) => (
               <div key={producer.id} className="producer-item">
                 <span>{producer.name}</span>
-                <button 
-                  onClick={() => {
-                    setProducers(producers.filter(p => p.id !== producer.id))
-                  }}
+                <button
+                  onClick={() =>
+                    setProducers(producers.filter((p) => p.id !== producer.id))
+                  }
                   className="remove-button"
                 >
                   ×
                 </button>
               </div>
             ))}
+
             {producers.length === 0 && (
               <p className="empty-message">No producers added yet</p>
             )}
@@ -107,10 +121,10 @@ function App() {
         </div>
 
         {producers.length >= 2 ? (
-          <TournamentBracket 
+          <TournamentBracket
             producers={producers}
-            onTournamentStart={() => setTournamentStarted(true)}
             tournamentStarted={tournamentStarted}
+            onTournamentStart={() => setTournamentStarted(true)}
           />
         ) : (
           <div className="tournament-bracket">
@@ -119,7 +133,7 @@ function App() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

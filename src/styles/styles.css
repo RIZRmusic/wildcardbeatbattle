@@ -75,28 +75,6 @@ body {
   z-index: 1000;
 }
 
-.left-panel:hover {
-  transform: translateX(0);
-}
-
-.left-panel-tab {
-  position: absolute;
-  right: -30px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.8rem 0.3rem;
-  cursor: pointer;
-  border-radius: 0 6px 6px 0;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  font-size: 1.5rem;
-  line-height: 1;
-  color: var(--color-text-secondary);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(5px);
-  border: 1px solid var(--bracket-line);
-}
-
 .left-panel-tab:hover {
   color: var(--color-winner);
   box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
@@ -426,13 +404,6 @@ body {
   overflow-y: auto; /* Make scrollable if content overflows */
 }
 
-
-.left-panel-tab {
-  /* ... existing styles ... */
-  background-color: #333; /* Darker tab background */
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Shadow on the left */
-}
-
 .left-panel-tab:hover {
   background-color: var(--color-winner); /* Use your winner color on hover */
 }
@@ -513,29 +484,91 @@ body {
   transform: translateX(-100%); /* Initially completely hidden */
 }
 
-.left-panel:hover,
 .left-panel.expanded {
   transform: translateX(0);
 }
 
+
 .left-panel-tab {
   position: absolute;
-  right: -30px;
+  right: -38px; /* push the tab further outside the panel */
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.7); /* Darker tab background */
-  padding: 0.8rem 0.5rem;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 1rem 0.6rem;
   cursor: pointer;
-  border-radius: 0 6px 6px 0;
-  color: white;
-  transition: background-color 0.3s ease;
-  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.3); /* More defined shadow */
-  z-index: 1001; /* Ensure tab is above the panel */
+  border-radius: 0 8px 8px 0;
+  color: var(--color-winner);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  width: 36px;
+  transition: all 0.3s ease;
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.4);
+  z-index: 1001;
 }
 
 .left-panel-tab:hover {
   background-color: var(--color-winner);
+  color: black;
+  box-shadow: -4px 0 15px rgba(0, 255, 200, 0.4);
 }
+
+
+.left-panel-tab:hover {
+  background-color: var(--color-winner);
+}
+
+/* Winner glow + scale effect */
+.producer-card.winner {
+  border: 2px solid #FFD700;
+  box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.7);
+  transform: scale(1.05);
+  transition: all 0.3s ease-in-out;
+  z-index: 2;
+}
+
+/* Smooth transition for card state */
+.producer-card {
+  transition: all 0.3s ease-in-out;
+}
+/* Pulse glow on hover for selectable cards */
+.producer-card:not(.disabled):hover {
+  animation: pulse-glow 1s infinite;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
+
+/* Pulse animation keyframes */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Container for round reveal animation */
+.round-slide-in {
+  animation: slideIn 0.6s ease-out;
+}
+
+/* Slide in from the bottom */
+@keyframes slideIn {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 
 
 /* ... (The rest of the admin panel styles, including .admin-controls, .reset-button, .producer-input, .producers-list, etc., remain the same from the previous response) */
